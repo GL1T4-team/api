@@ -1,5 +1,5 @@
 pandas
-openpyxl
 fastapi
 python-multipart
 uvicorn
+content-size-limit-asgi
