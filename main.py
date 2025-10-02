@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -16,4 +17,4 @@ async def upload_file(file: UploadFile):
 
     if file.content_type == 'text/csv':
         data, skipped_rows = parse_csv(file.file)
-        return {'data':data, 'skipped_rows':skipped_rows}
+        return JSONResponse({'data':data, 'skipped_rows':skipped_rows})
