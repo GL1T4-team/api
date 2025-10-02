@@ -2,3 +2,4 @@ pandas
 fastapi
 python-multipart
 uvicorn
+psycopg2

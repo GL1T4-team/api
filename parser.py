@@ -20,8 +20,8 @@ def parse_normal_format(row:list) -> dict:
 
                 res['flight_id'] = flight_id_.group(2) if flight_id_ != None else 'ZZZZZ'
                 res["uav_type"] = uav_type_.group(1) if uav_type_ != None else 'ZZZZZ'
-                res["departure_coords"] = departure_coords_.group(1,2) if departure_coords_ != None else'ZZZZZ'
-                res["arrival_coords"] = arrival_coords_.group(1,2) if arrival_coords_ != None else 'ZZZZZ'
+                res["departure_coords"] = departure_coords_.group(1,2) if departure_coords_ != None else ('ZZZZZ','ZZZZZ')
+                res["arrival_coords"] = arrival_coords_.group(1,2) if arrival_coords_ != None else ('ZZZZZ','ZZZZZ')
                 res["flight_date"] = re.sub(r"(\d{2})(\d{2})(\d{2})",r"20\1-\2-\3",flight_date_.group(1)) if flight_date_ != None else 'ZZZZZ'
                 res["flight_region"] = flight_region_.group(1) if flight_region_ != None else 'ZZZZZ'
                 
@@ -89,8 +89,8 @@ def parse_other_format(row:list) -> dict:
         res['arrival_coords'] = coords[1]
 
     else:
-        res['departure_coords'] = 'ZZZZZ'
-        res['arrival_coords'] = 'ZZZZZ'
+        res['departure_coords'] = ('ZZZZZ','ZZZZZ')
+        res['arrival_coords'] = ('ZZZZZ','ZZZZZ')
     
     # Добавляем дату полёта и время взлёта/посадки
     format_time = lambda time_str: re.search(r"(\d{2}\:\d{2})", time_str).group(1)
@@ -129,7 +129,7 @@ def parse_csv(file_path):
     data = []
     errors = []
 
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, on_bad_lines="skip")
 
     for ind,row in df.iterrows():
 
