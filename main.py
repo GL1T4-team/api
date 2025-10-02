@@ -6,7 +6,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["*"],
+    allow_origins = ["https://gl1t4-team-client-51eb.twc1.net"],
     allow_methods = ["*"],
     allow_headers = ["*"]
 )
