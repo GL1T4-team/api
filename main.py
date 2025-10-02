@@ -11,10 +11,10 @@ app.add_middleware(
     allow_headers = ["*"]
 )
 
-@app.post("/upload_file")
+@app.get("/upload_file")
 async def upload_file(file: UploadFile):
     from parser import parse_csv
 
     if file.content_type == 'text/csv':
         data, skipped_rows = parse_csv(file.file)
-        return JSONResponse({'data':data, 'skipped_rows':skipped_rows})
+        return JSONResponse({'skipped_rows':skipped_rows})
