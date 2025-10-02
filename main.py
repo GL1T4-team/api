@@ -11,6 +11,10 @@ app.add_middleware(
     allow_headers = ["*"]
 )
 
+@app.get("/")
+async def root():
+    return "ok"
+
 @app.get("/upload_file")
 async def upload_file(file: UploadFile):
     from parser import parse_csv
