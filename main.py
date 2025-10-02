@@ -16,7 +16,7 @@ app.add_middleware(
 async def root():
     return "ok"
 
-@app.get("/upload_file")
+@app.post("/upload_file")
 async def upload_file(file: UploadFile):
     from parser import parse_csv
 
