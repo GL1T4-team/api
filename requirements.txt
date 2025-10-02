@@ -2,4 +2,3 @@ pandas
 fastapi
 python-multipart
 uvicorn
-content-size-limit-asgi
