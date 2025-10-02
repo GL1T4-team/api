@@ -8,7 +8,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins = ["https://gl1t4-team-client-51eb.twc1.net"],
     allow_methods = ["*"],
-    allow_headers = ["*"]
+    allow_headers = ["*"],
+    allow_credentials = True
 )
 
 @app.get("/")
