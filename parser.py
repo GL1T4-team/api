@@ -157,8 +157,6 @@ def parse_csv(file_path):
     print(f"Total data length: {len(data)}\nTotal errors: {len(errors)}")
     return (data, len(errors))
 
-
-
 # xls = pd.ExcelFile('2025.xlsx')
 
 # data = []
