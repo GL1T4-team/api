@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import json
 
+# Функция для перевода сообщений в формат для бд
 def format_data(data):
     res = []
     for row in data:

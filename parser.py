@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+from datetime import datetime
 
 # Персер для отчётов формата SHR
 def parse_normal_format(row:list) -> dict:
@@ -10,7 +11,10 @@ def parse_normal_format(row:list) -> dict:
         if type(col) == str:
             col = col.replace("\n","")
             
+            # Находим SHR сообщение
             if re.match(r".*?\((SHR|PLN)(.*?)\).*?",col):
+
+                # Извлекаем необходимые данные из сообщения
                 flight_id_ = re.search(r"(SHR|PLN)-(.*?)\W",col)
                 uav_type_ = re.search(r"TYP\/(.*?)\W",col)
                 departure_coords_ = re.search(r"DEP\/(\d+)N(\d+)E\W",col)
@@ -94,25 +98,32 @@ def parse_other_format(row:list) -> dict:
     
     # Добавляем дату полёта и время взлёта/посадки
     format_time = lambda time_str: re.search(r"(\d{2}\:\d{2})", time_str).group(1)
-
+    
+    # Если в строке нашёлся только один столбец с датой - то это дата полёта, т.к. она указывается первой
     if len(time) == 1:
         res['flight_date'] = re.search(r"(\d{4}\-\d{2}\-\d{2})", time[0]).group(1)
 
     if len(time) >=2:
 
         res['flight_date'] = re.search(r"(\d{4}\-\d{2}\-\d{2})", time[0]).group(1)
+
+        # Если в строке чётное кол-во  столбцов с датами - то даты полёта нету, значит её можно взять из любого столбца
         if len(time) % 2 == 0:
             res['start_time'] = format_time(time[0])
 
+            # Если столбцов со временем 2 - то это столбцы с временем взлёта и посадки
             if len(time) == 2:
                 res['end_time'] = format_time(time[1])
 
+            # Если столбцов с временем 4 - то берём 1 и 3, так как там время идёт в парах: (время, ориентировочное время)
             elif len(time) == 4:
                 res['end_time'] = format_time(time[2])
 
         else:
+            # если кол-во столбцов со временем - нечётное - то первый - это дата
             res['start_time'] = format_time(time[1])
 
+            # Тут логика аналогична строкам 114 и 118
             if len(time) == 3:
                 res['end_time'] = format_time(time[2])
 
@@ -134,6 +145,8 @@ def parse_csv(file_path):
     for ind,row in df.iterrows():
 
         row = row.to_list()
+
+        # Определяем, в каком формате хранится информация в строке
         normal_format = False
 
         for col in row:
@@ -142,6 +155,7 @@ def parse_csv(file_path):
                     normal_format = True
 
         try:
+            # Парсим в зависимости от формата
             if normal_format:
                 res = parse_normal_format(row)
 
@@ -156,43 +170,3 @@ def parse_csv(file_path):
     print(errors)
     print(f"Total data length: {len(data)}\nTotal errors: {len(errors)}")
     return (data, len(errors))
-
-# xls = pd.ExcelFile('2025.xlsx')
-
-# data = []
-# errors = []
-# row = xls.parse(0).loc[17].to_list()#.fillna("ZZZZZ")
-
-# print(row)
-# print(parse_normal_format(row))
-
-# sheets_num = len(xls.sheet_names)
-
-# for sheet_ind in range(0,sheets_num-1):
-#     for ind,row in xls.parse(sheet_ind).iterrows():
-
-#         row = row.to_list()
-        
-#         normal_format = False
-
-#         for col in row:
-#             if (type(col) == str):
-#                 if re.match(r".*?\((SHR|PLN)(.*?)\).*?",col.replace("\n","")):
-#                     normal_format = True
-
-#         try:
-#             if normal_format:
-#                 res = parse_normal_format(row)
-
-#             else:
-#                 res = parse_other_format(row)
-
-#             data.append(res)
-
-#             # print(f"Parsed: {sheet_ind+1} / {sheets_num}, {ind}")
-                
-#         except Exception as e:
-#             errors.append((sheet_ind, ind, e))
-
-# print(errors)
-# print(f"Total data length: {len(data)}\nTotal errors: {len(errors)}")
